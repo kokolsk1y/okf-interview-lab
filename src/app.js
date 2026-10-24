@@ -30,6 +30,7 @@ function renderStart() {
     <div class="hero-content">
       <h1 id="start-title" class="question-text">Как вы сохраняете важный контекст работы?</h1>
       <p>Здесь нет правильных ответов. Выбирайте только один вариант — тот, который подходит вам больше всего.</p>
+      <p class="privacy-note">После завершения ответы, включая короткий текст, отправятся организатору. Не указывайте личные данные.</p>
       <p class="time-note">Не более 3 минут.</p>
       <button class="primary" id="start">${answers.length ? 'Продолжить' : 'Начать'}</button>
     </div>
@@ -106,10 +107,21 @@ function renderDone() {
     <div class="done-content">
       <h1 id="done-title">Спасибо за ответы</h1>
       <p>Опрос завершён.</p>
+      <p id="delivery-status" aria-live="polite">Сохраняем ответы…</p>
       <div class="actions"><button class="primary" id="export">Скачать ответы</button>
         <button class="secondary" id="restart">Начать заново</button></div>
     </div>
   </section>`;
+  const status = document.querySelector('#delivery-status');
+  fetch('https://script.google.com/macros/s/AKfycbyqUWJrkCBUDyb8jllXRNHHLHh8tjNggHMSUvG5XUKiJNq0EHZ3QZAL0ZImI3eh9TJeEg/exec', {
+    method: 'POST', mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+    body: JSON.stringify({ schemaVersion: report.schemaVersion, sessionId: report.sessionId, transcript: report.transcript }),
+  }).then(() => {
+    status.textContent = 'Запрос на сохранение отправлен. Скачайте копию ответов на всякий случай.';
+  }).catch(() => {
+    status.textContent = 'Не удалось отправить ответы. Скачайте копию и передайте организатору.';
+  });
   document.querySelector('#export').onclick = () => downloadReport(report);
   document.querySelector('#restart').onclick = () => { answers = []; screen = 'start'; mode = 'express'; sessionId = crypto.randomUUID(); save(); render(); };
 }

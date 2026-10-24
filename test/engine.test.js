@@ -26,6 +26,7 @@ test('control and no-memory branches finish without invented event', () => {
   const control = run(['solo', 'none', 'no_need']);
   assert.equal(nextQuestion(control), null);
   assert.equal(deriveState(control).validationStatus, 'no_reported_problem');
+  assert.equal(createReport(control, 'test-id').transcript[2].displayAnswer, 'Пока не возникало такой потребности');
   const noMemory = run(['ai', 'transfer', 'no_memory']);
   assert.equal(nextQuestion(noMemory), null);
   assert.equal(deriveState(noMemory).validationStatus, 'insufficient_evidence');

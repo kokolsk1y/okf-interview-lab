@@ -72,7 +72,12 @@ export function nextQuestion(answers, mode = 'express') {
 export function createReport(answers, sessionId, mode = 'express') {
   const state = deriveState(answers);
   const situationOptions = situations[state.persona ?? 'other'] ?? situations.other;
-  const optionMap = { persona: personas, situation: [...situationOptions, ['none', 'Ничего подобного']], ...common };
+  const optionMap = {
+    persona: personas,
+    situation: [...situationOptions, ['none', 'Ничего подобного не происходило'], ['other', 'Другое']],
+    control: [...common.prevention, ['other', 'Другое'], ['no_need', 'Пока не возникало такой потребности']],
+    ...common,
+  };
   const transcript = answers.map(({ id, value }) => ({
     questionId: id,
     answer: value,
